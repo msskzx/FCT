@@ -15,6 +15,8 @@ from utils.args_utils import parse_args
 from utils.data_utils import get_acdc,convert_masks
 from utils.model import FCT
 from utils.dataset_utils import ACDCTrainDataset
+import pickle
+import os
 
 args = parse_args()
 
@@ -48,6 +50,14 @@ def init_weights(m):
         if m.bias is not None:
             torch.nn.init.zeros_(m.bias)
 
+def save_model(model, file_name, directory="models"):
+    """Save model as pickle"""
+    model = model.cpu()
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    model_path = os.path.join(directory, file_name)
+    torch.save(model, model_path)
+    return model_path
 
 def main():
     # model instatation
@@ -84,6 +94,7 @@ def main():
     trainer = L.Trainer(precision=precision,max_epochs=args.max_epoch,callbacks=[lr_monitor])
     trainer.fit(model=model,train_dataloaders=train_dataloader,val_dataloaders=validation_dataloader)
 
+    save_model(model, "fct.model")
 
 if __name__ == '__main__':
     main()
