@@ -5,3 +5,4 @@ output_model/
 python.log
 .DS_Store
 lightning_logs/
+data

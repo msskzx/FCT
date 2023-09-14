@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader,TensorDataset
 from datetime import datetime
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
+from sklearn.model_selection import train_test_split
+
 # from google.colab import drive
 
 from torch.utils.tensorboard import SummaryWriter
@@ -65,22 +67,24 @@ def main():
     model.apply(init_weights)
 
     # get data
-    # training
     acdc_data, _, _ = get_acdc('ACDC/training', input_size=(args.img_size,args.img_size,1))
-    acdc_data = ACDCTrainDataset(acdc_data[0], acdc_data[1],args)
-    train_dataloader = DataLoader(acdc_data, batch_size=args.batch_size,num_workers=args.workers)
+
+    # split data into train and val
+    X_train, X_val, y_train, y_val = train_test_split(acdc_data[0], acdc_data[1], test_size=0.2, random_state=42)
+    train_dataset = ACDCTrainDataset(X_train, y_train,args)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size,num_workers=args.workers)
+
     # validation
-    acdc_data, _, _ = get_acdc('ACDC/testing', input_size=(args.img_size,args.img_size,1))
-    acdc_data[1] = convert_masks(acdc_data[1])
-    acdc_data[0] = np.transpose(acdc_data[0], (0, 3, 1, 2)) # for the channels
-    acdc_data[1] = np.transpose(acdc_data[1], (0, 3, 1, 2)) # for the channels
-    acdc_data[0] = torch.Tensor(acdc_data[0]) # convert to tensors
-    acdc_data[1] = torch.Tensor(acdc_data[1]) # convert to tensors
-    acdc_data = TensorDataset(acdc_data[0], acdc_data[1])
-    validation_dataloader = DataLoader(acdc_data, batch_size=args.batch_size,num_workers=args.workers)
+    y_val = convert_masks(y_val)
+    X_val = np.transpose(X_val, (0, 3, 1, 2)) # for the channels
+    y_val = np.transpose(y_val, (0, 3, 1, 2)) # for the channels
+    X_val = torch.Tensor(X_val) # convert to tensors
+    y_val = torch.Tensor(y_val) # convert to tensors
+    val_dataset = TensorDataset(X_val, y_val)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size,num_workers=args.workers)
 
     # resume
-    # TODO need debug
+    # need debug
     if args.resume:
         if args.new_param:
             model = FCT.load_from_checkpoint('lightning_logs/version_2/checkpoints/epoch=74-step=4500.ckpt',args=args)
@@ -92,8 +96,7 @@ def main():
     lr_monitor = LearningRateMonitor(logging_interval='epoch')
 
     trainer = L.Trainer(precision=precision,max_epochs=args.max_epoch,callbacks=[lr_monitor])
-    trainer.fit(model=model,train_dataloaders=train_dataloader,val_dataloaders=validation_dataloader)
-
+    trainer.fit(model=model,train_dataloaders=train_dataloader,val_dataloaders=val_dataloader)
     save_model(model, "fct.model")
 
 if __name__ == '__main__':
