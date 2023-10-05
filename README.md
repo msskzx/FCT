@@ -1,5 +1,6 @@
-# FCT-Pytorch
-Pytorch implementation for The Fully Convolutional Transformer(FCT) 
+# FCT Bias Audit on ACDC
+
+This project aims to perform a bias audit on the `FCT` model for different `BMI` and `Age` groups on the `ACDC` dataset.
 
 ## ACDC Dataset
 
@@ -15,17 +16,9 @@ Trained the model for 120 epochs which took around 3 hours on a `NVIDIA Tesla T4
 
 ## Bias Audit for BMI
 
-The `FCT` model was evaluated on the test set for 4 BMI categories.
+The `FCT` model was evaluated on the test set of 50 patients. Analysis will follow soon.
 
-## note
+## Training
 
-### This repo can:
-
-- reproduces the origin aurhor's work on tensorflow.You need reference the original repo's issue that they only use ACDC train set(split ACDC/traning set into 7:2:1 train:validation:test).You can get dice 92.9
-- Get about 90 dice on official test set if your train on the whole train set(using ACDC/training and test on ACDC/testing).
-
-
-## training
-
-1. Get ACDC dataset.And remember to delete `.md` file in your ACDC dataset folder
+1. Get ACDC dataset and delete `.md` file in your ACDC dataset folder
 2. use `python main.py` to start training
