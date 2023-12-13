@@ -6,3 +6,4 @@ python.log
 .DS_Store
 lightning_logs/
 data
+models
