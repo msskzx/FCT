@@ -12,7 +12,7 @@ Visualizations, analysis were performed to get a better understanding of the dat
 
 The Fully Convolutional Transformer (`FCT`) proposed by this [paper](https://arxiv.org/abs/2206.00566) is used in this project. The model is trained on the `ACDC` dataset using the `PyTorch` code variant available [here](https://github.com/kingo233/FCT-Pytorch).
 
-Trained the model for 120 epochs which took around 3 hours on a `NVIDIA Tesla T4` GPU. Then, the model was saved for further analysis and auditing. Model is available [here](drive).
+Trained the model for 120 epochs which took around 3 hours on a `NVIDIA Tesla T4` GPU. Then, the model was saved for further analysis and auditing. Model is available [here](https://drive.google.com/file/d/12BPQm7GEcmTISYcYQXMJlQzwqohdDhb0/view?usp=share_link).
 
 ## Bias Audit for BMI
 
